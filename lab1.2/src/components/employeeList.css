@@ -1,0 +1,26 @@
+.app {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f4f4f4;
+}
+
+.app header {
+  background-color: #007bff;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;  /* Stack title and greeting vertically */
+  gap: 10px;
+}
+
+.app main {
+  background-color: white;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.app footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
