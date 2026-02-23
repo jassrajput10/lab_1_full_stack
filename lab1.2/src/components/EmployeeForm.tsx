@@ -1,21 +1,11 @@
-import React, { useState } from 'react';
-
-interface Employee {
-  firstName: string;
-  lastName?: string;
-}
-
-interface Department {
-  name: string;
-  employees: Employee[];
-}
+import { useState } from 'react';
 
 interface EmployeeFormProps {
-  departments: Department[];  
-  setDepartments: React.Dispatch<React.SetStateAction<Department[]>>;
+  departments: { name: string; employees: { firstName: string; lastName?: string; }[] }[];
+  setDepartments: React.Dispatch<React.SetStateAction<{ name: string; employees: { firstName: string; lastName?: string; }[] }[]>>;
 }
 
-const EmployeeForm: React.FC<EmployeeFormProps> = ({ departments, setDepartments }) => {
+function EmployeeForm({ departments, setDepartments }: EmployeeFormProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -34,7 +24,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ departments, setDepartments
       return;
     }
 
-    const newEmployee: Employee = { firstName, lastName: lastName || undefined };
+    const newEmployee = { firstName, lastName: lastName || undefined };  // Fixed: Added undefined
     setDepartments(prev =>
       prev.map(dept =>
         dept.name === selectedDepartment
@@ -76,6 +66,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ departments, setDepartments
       </form>
     </section>
   );
-};
+}
 
 export default EmployeeForm;
