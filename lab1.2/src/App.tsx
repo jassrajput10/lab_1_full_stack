@@ -1,6 +1,11 @@
-import EmployeeList from "./components/employeeList";
+import { useState } from 'react';
+import './App.css';
+import Main from './components/main';  
+import { initialDepartments } from './data';
 
 function App() {
+  const [departments, setDepartments] = useState(initialDepartments);
+
   return (
     <div className="app">
       <header>
@@ -9,7 +14,7 @@ function App() {
       </header>
 
       <main>
-        <EmployeeList />  
+        <Main departments={departments} setDepartments={setDepartments} />
       </main>
 
       <footer>
