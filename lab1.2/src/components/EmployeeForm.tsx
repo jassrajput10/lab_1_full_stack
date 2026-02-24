@@ -1,41 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useFormInput } from '../hooks/useFormInput';
+import { employeeService } from '../services/employeeService';
+import type { Department } from '../data';
 
 interface EmployeeFormProps {
-  departments: { name: string; employees: { firstName: string; lastName?: string; }[] }[];
-  setDepartments: React.Dispatch<React.SetStateAction<{ name: string; employees: { firstName: string; lastName?: string; }[] }[]>>;
+  departments: Department[];
+  setDepartments: React.Dispatch<React.SetStateAction<Department[]>>;
 }
 
 function EmployeeForm({ departments, setDepartments }: EmployeeFormProps) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [error, setError] = useState('');
+  const [departmentError, setDepartmentError] = useState('');
+  
+  const firstName = useFormInput('');
+  const lastName = useFormInput('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(function() {
+    const deptData = employeeService.getDepartments();
+    setDepartments(deptData);
+  }, []);
+
+  const handleSubmit = function(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
+    setDepartmentError('');
 
-    if (firstName.length < 3) {
-      setError('First Name must be at least 3 characters.');
-      return;
-    }
+    let isValid = true;
     if (!selectedDepartment) {
-      setError('Please select a department.');
-      return;
+      setDepartmentError('Please select a department.');
+      isValid = false;
     }
 
-    const newEmployee = { firstName, lastName: lastName || undefined };  // Fixed: Added undefined
-    setDepartments(prev =>
-      prev.map(dept =>
-        dept.name === selectedDepartment
-          ? { ...dept, employees: [...dept.employees, newEmployee] }
-          : dept
-      )
+    const isFirstNameValid = firstName.validate(
+      function(value: string) { return value.length >= 3; },
+      'First Name must be at least 3 characters.'
     );
 
-    setFirstName('');
-    setLastName('');
-    setSelectedDepartment('');
+    if (!isValid || !isFirstNameValid) {
+      return;
+    }
+
+    const newEmployee = { 
+      firstName: firstName.value, 
+      lastName: lastName.value || undefined 
+    };
+
+    const result = employeeService.createEmployee(selectedDepartment, newEmployee);
+
+    if (result.success && result.departments) {
+      setDepartments(result.departments);
+      firstName.reset();
+      lastName.reset();
+      setSelectedDepartment('');
+    } else {
+      firstName.setError(result.error || 'Error creating employee');
+    }
   };
 
   return (
@@ -43,25 +61,44 @@ function EmployeeForm({ departments, setDepartments }: EmployeeFormProps) {
       <h2>Add New Employee</h2>
       <form onSubmit={handleSubmit}>
         <label>
-          First Name: <input name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+          First Name: 
+          <input 
+            type="text"
+            value={firstName.value} 
+            onChange={(e) => firstName.setValue(e.target.value)} 
+            name="firstName" 
+            required 
+          />
+          {firstName.error && <span className="error">{firstName.error}</span>}
         </label>
         <hr />
         <label>
-          Last Name (Optional): <input name="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          Last Name (Optional): 
+          <input 
+            type="text"
+            value={lastName.value} 
+            onChange={(e) => lastName.setValue(e.target.value)} 
+            name="lastName" 
+          />
         </label>
         <hr />
         <p>
           Department:
           <label>
-            <select name="department" value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)} required>
+            <select 
+              name="department" 
+              value={selectedDepartment} 
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+              required
+            >
               <option value="">Select Department</option>
               {departments.map(dept => (
                 <option key={dept.name} value={dept.name}>{dept.name}</option>
               ))}
             </select>
           </label>
+          {departmentError && <span className="error">{departmentError}</span>}
         </p>
-        {error && <p className="error">{error}</p>}
         <button type="submit">Add Employee</button>
       </form>
     </section>
