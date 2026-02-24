@@ -1,12 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import Main from './components/main';
 import Organization from './components/Organization';
-import { initialDepartments } from './data';
+import { employeeService } from './services/employeeService';
+import type { Department } from './data';
 
 function App() {
-  const [departments, setDepartments] = useState(initialDepartments);
+  const [departments, setDepartments] = useState<Department[]>([]);
+
+  // Load initial data from service on mount
+  useEffect(() => {
+    const deptData = employeeService.getDepartments();
+    setDepartments(deptData);
+  }, []);
 
   return (
     <BrowserRouter>

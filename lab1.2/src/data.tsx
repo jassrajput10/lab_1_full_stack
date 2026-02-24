@@ -13,6 +13,7 @@ export interface Role {
   role: string;
 }
 
+// Initial data - will be used by repository
 export const initialDepartments: Department[] = [
   {
     name: "Administration",
