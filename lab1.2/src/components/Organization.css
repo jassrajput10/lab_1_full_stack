@@ -1,0 +1,58 @@
+.organization {
+  padding: 20px;
+}
+
+.organization h2 {
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.organization-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.person-name {
+  font-weight: bold;
+}
+
+.person-role {
+  color: #666;
+}
+
+.org-form {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.org-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.org-form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.org-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
