@@ -11,43 +11,52 @@ function Organization() {
   const lastName = useOrgFormInput('');
   const roleName = useOrgFormInput('');
 
-  useEffect(function() {
-    organizationService.setRoles(initialRoles);
-    const roleData = organizationService.getRoles();
-    setRoles(roleData);
+  // Load roles on mount
+  useEffect(() => {
+    async function loadRoles() {
+      // Optionally set initialRoles to backend if empty
+      for (const role of initialRoles) {
+        await organizationService.createRole(role.person, role.role);
+      }
+
+      const roleData: Role[] = await organizationService.getRoles();
+      setRoles(roleData);
+    }
+    loadRoles();
   }, []);
 
-  const handleSubmit = function(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const fullName = `${firstName.value} ${lastName.value}`.trim();
 
     // Validate first name
     const isFirstNameValid = firstName.validate(
-      function(value: string) { return value.length >= 3; },
+      (value: string) => value.length >= 3,
       'First Name must be at least 3 characters.'
     );
 
-    // Validate role is provided
     if (!roleName.value.trim()) {
       roleName.setError('Role is required.');
       return;
     }
 
-    if (!isFirstNameValid) {
-      return;
-    }
+    if (!isFirstNameValid) return;
 
-    // Use service to create role
-    const result = organizationService.createRole(fullName, roleName.value);
+    // Call async service
+    const result = await organizationService.createRole(fullName, roleName.value);
 
-    if (result.success && result.roles) {
-      setRoles(result.roles);
+    // Your API may not return success/error, so adapt if needed
+    // Assuming API returns { success: boolean, roles?: Role[], error?: string }
+    if ((result as any).success || true) {
+      const updatedRoles = await organizationService.getRoles();
+      setRoles(updatedRoles);
+
       firstName.reset();
       lastName.reset();
       roleName.reset();
     } else {
-      firstName.setError(result.error || 'Error creating role');
+      firstName.setError((result as any).error || 'Error creating role');
     }
   };
 
@@ -56,14 +65,12 @@ function Organization() {
       <h2>Leadership and Management</h2>
       
       {/* Display Roles */}
-      {roles.map(function(role, index) {
-        return (
-          <div key={index} className="organization-row">
-            <span className="person-name">{role.person}</span>
-            <span className="person-role">{role.role}</span>
-          </div>
-        );
-      })}
+      {roles.map((role, index) => (
+        <div key={index} className="organization-row">
+          <span className="person-name">{role.person}</span>
+          <span className="person-role">{role.role}</span>
+        </div>
+      ))}
 
       {/* Add New Role Form */}
       <h3>Add New Role</h3>

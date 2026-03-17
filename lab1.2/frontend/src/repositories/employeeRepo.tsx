@@ -1,6 +1,5 @@
-import type { Department, Employee } from '../data';  // Type-only import for types
-import { initialDepartments } from '../data';          // Regular import for data
-
+import type { Department, Employee } from '../../../backend/data/data';  
+import { initialDepartments } from '../../../backend/data/data';          
 let departmentsData: Department[] = [...initialDepartments];
 
 export const employeeRepo = {
