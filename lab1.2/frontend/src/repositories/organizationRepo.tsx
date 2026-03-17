@@ -1,6 +1,7 @@
 import type { Role } from '../data';
+import { initialRoles } from '../data';
 
-let rolesData: Role[] = [];
+let rolesData: Role[] = [...initialRoles];
 
 export const organizationRepo = {
   getRoles: (): Role[] => {
