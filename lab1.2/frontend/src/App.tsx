@@ -4,7 +4,7 @@ import './App.css';
 import Main from './components/Main';
 import Organization from './components/Organization';
 import { employeeService } from './services/employeeService';
-import type { Department } from '../../frontend/src/data';
+import type { Department } from './data';
 
 function App() {
 

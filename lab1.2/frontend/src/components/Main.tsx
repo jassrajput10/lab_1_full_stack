@@ -1,6 +1,6 @@
 import EmployeeList from './employeeList';
 import EmployeeForm from './EmployeeForm';
-import type { Department } from '../../../backend/data/data';
+import type { Department } from '../data';
 
 interface MainProps {
   departments: Department[];

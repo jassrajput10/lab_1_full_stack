@@ -1,18 +1,55 @@
-import express from "express";
-import cors from "cors";
+import express from 'express';
+import cors from 'cors';
 
-import employeeRoutes from "./routes/employeeRoutes";
-import organizationRoutes from "./routes/organizationRoutes";
+import employeeRoutes from './routes/employeeRoutes';
+import departmentRoutes from './routes/DepartmentRoutes';
+import roleRoutes from './routes/RoleRoutes';
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+// Allow requests from the frontend AND from Postman / dev tools
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (Postman, curl) or from localhost
+    if (!origin || origin.startsWith('http://localhost')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 app.use(express.json());
 
-app.use("/api", employeeRoutes);
-app.use("/api", organizationRoutes);
+// Health check — GET http://localhost:3001/health
+app.get('/health', (_req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    routes: [
+      'GET  /api/employees',
+      'GET  /api/employees/:id',
+      'GET  /api/employees/department/:department',
+      'POST /api/employees',
+      'GET  /api/departments',
+      'GET  /api/departments/:name',
+      'GET  /api/roles',
+      'GET  /api/roles/:person',
+      'POST /api/roles',
+    ]
+  });
+});
+
+app.use('/api/employees', employeeRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/roles', roleRoutes);
+
+// 404 fallback
+app.use((_req, res) => {
+  res.status(404).json({ success: false, error: 'Route not found' });
+});
 
 app.listen(3001, () => {
-  console.log("Backend running on port 3001");
+  console.log('Backend running on http://localhost:3001');
+  console.log('Health check: http://localhost:3001/health');
 });
