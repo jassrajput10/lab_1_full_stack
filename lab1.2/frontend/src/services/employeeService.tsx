@@ -1,20 +1,23 @@
-const API = "http://localhost:3001/api";
+const API = 'http://localhost:3001/api';
 
 export const employeeService = {
 
   async getDepartments() {
     const res = await fetch(`${API}/departments`);
-    return res.json();
+    const json = await res.json();
+    // Backend returns { success: true, data: [...] } — unwrap it
+    return json.data ?? [];
   },
 
-  async createEmployee(departmentName: string, employee: any) {
-
+  async createEmployee(departmentName: string, employee: { firstName: string; lastName?: string }) {
     const res = await fetch(`${API}/employees`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ departmentName, employee })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ departmentName, employee }),
     });
-
-    return res.json();
+    const json = await res.json();
+    // Backend returns updated departments list inside data
+    return json.data ?? null;
   }
+
 };

@@ -1,26 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useOrgFormInput } from '../hooks/useOrgFormInput';
 import { organizationService } from '../services/organizationService';
-import { initialRoles, type Role } from '../data';
+import type { Role } from '../data';
 import './Organization.css';
 
 function Organization() {
   const [roles, setRoles] = useState<Role[]>([]);
-  
+
   const firstName = useOrgFormInput('');
   const lastName = useOrgFormInput('');
   const roleName = useOrgFormInput('');
 
-  // Load roles on mount
+  // Load roles from backend on mount — no seeding, data lives in the backend
   useEffect(() => {
     async function loadRoles() {
-      // Optionally set initialRoles to backend if empty
-      for (const role of initialRoles) {
-        await organizationService.createRole(role.person, role.role);
-      }
-
-      const roleData: Role[] = await organizationService.getRoles();
-      setRoles(roleData);
+      const data: Role[] = await organizationService.getRoles();
+      setRoles(data);
     }
     loadRoles();
   }, []);
@@ -28,9 +23,6 @@ function Organization() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const fullName = `${firstName.value} ${lastName.value}`.trim();
-
-    // Validate first name
     const isFirstNameValid = firstName.validate(
       (value: string) => value.length >= 3,
       'First Name must be at least 3 characters.'
@@ -43,28 +35,25 @@ function Organization() {
 
     if (!isFirstNameValid) return;
 
-    // Call async service
-    const result = await organizationService.createRole(fullName, roleName.value);
+    const fullName = `${firstName.value} ${lastName.value}`.trim();
 
-    // Your API may not return success/error, so adapt if needed
-    // Assuming API returns { success: boolean, roles?: Role[], error?: string }
-    if ((result as any).success || true) {
-      const updatedRoles = await organizationService.getRoles();
-      setRoles(updatedRoles);
+    const newRole = await organizationService.createRole(fullName, roleName.value.trim());
 
+    if (newRole) {
+      // Append the new role returned from the backend
+      setRoles(prev => [...prev, newRole]);
       firstName.reset();
       lastName.reset();
       roleName.reset();
     } else {
-      firstName.setError((result as any).error || 'Error creating role');
+      firstName.setError('Error creating role — check the backend is running.');
     }
   };
 
   return (
     <section className="organization">
       <h2>Leadership and Management</h2>
-      
-      {/* Display Roles */}
+
       {roles.map((role, index) => (
         <div key={index} className="organization-row">
           <span className="person-name">{role.person}</span>
@@ -72,38 +61,37 @@ function Organization() {
         </div>
       ))}
 
-      {/* Add New Role Form */}
       <h3>Add New Role</h3>
       <form onSubmit={handleSubmit} className="org-form">
         <label>
-          First Name: 
-          <input 
+          First Name:
+          <input
             type="text"
-            value={firstName.value} 
+            value={firstName.value}
             onChange={(e) => firstName.setValue(e.target.value)}
           />
           {firstName.error && <span className="error">{firstName.error}</span>}
         </label>
-        
+
         <label>
-          Last Name: 
-          <input 
+          Last Name:
+          <input
             type="text"
-            value={lastName.value} 
+            value={lastName.value}
             onChange={(e) => lastName.setValue(e.target.value)}
           />
         </label>
-        
+
         <label>
-          Role: 
-          <input 
+          Role:
+          <input
             type="text"
-            value={roleName.value} 
+            value={roleName.value}
             onChange={(e) => roleName.setValue(e.target.value)}
           />
           {roleName.error && <span className="error">{roleName.error}</span>}
         </label>
-        
+
         <button type="submit">Add Role</button>
       </form>
     </section>

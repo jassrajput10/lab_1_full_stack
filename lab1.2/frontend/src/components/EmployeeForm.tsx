@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useFormInput } from '../hooks/useFormInput';
 import { employeeService } from '../services/employeeService';
-import type { Department } from '../../../frontend/src/data';
+import type { Department } from '../data';
 
 interface EmployeeFormProps {
-departments: Department[];
-setDepartments: React.Dispatch<React.SetStateAction<Department[]>>;
+  departments: Department[];
+  setDepartments: React.Dispatch<React.SetStateAction<Department[]>>;
 }
 
 function EmployeeForm({ departments, setDepartments }: EmployeeFormProps) {
