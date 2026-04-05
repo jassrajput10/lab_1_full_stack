@@ -56,8 +56,10 @@ function Organization() {
 
       {roles.map((role, index) => (
         <div key={index} className="organization-row">
-          <span className="person-name">{role.person}</span>
-          <span className="person-role">{role.role}</span>
+          <span className="person-name">
+  {         role.employee ? `${role.employee.firstName} ${role.employee.lastName ?? ''}`.trim() : 'Unknown'}
+          </span>
+          <span className="person-role">{role.title}</span>
         </div>
       ))}
 

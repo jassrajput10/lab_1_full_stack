@@ -1,7 +1,7 @@
-import './EmployeeList.css';
+import './employeeList.css';
 
 interface EmployeeListProps {
-  departments: { name: string; employees: { firstName: string; lastName?: string; }[] }[];
+  departments: { name: string; employees: { firstName: string; lastName?: string | null; }[] }[];
 }
 
 function EmployeeList({ departments }: EmployeeListProps) {

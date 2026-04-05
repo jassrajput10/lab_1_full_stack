@@ -1,14 +1,17 @@
-import { Department } from '../types';
-import { departments } from '../data/department';
+import prisma from '../lib/prisma';
 
 export class DepartmentRepository {
-  private departments: Department[] = departments;
 
-  async getAll(): Promise<Department[]> {
-    return this.departments;
+  async getAll() {
+    return prisma.department.findMany({
+      include: { employees: true }
+    });
   }
 
-  async getByName(name: string): Promise<Department | undefined> {
-    return this.departments.find(dept => dept.name === name);
+  async getByName(name: string) {
+    return prisma.department.findUnique({
+      where: { name },
+      include: { employees: true }
+    });
   }
 }

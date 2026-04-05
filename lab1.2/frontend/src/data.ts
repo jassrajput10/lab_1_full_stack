@@ -1,22 +1,26 @@
 export interface Employee {
+  id?: number;
   firstName: string;
-  lastName?: string;
+  lastName?: string | null;
+  departmentId?: number;
 }
 
 export interface Department {
+  id?: number;
   name: string;
   employees: Employee[];
 }
 
-// Add Role interface
 export interface Role {
-  role: string;
-  person: string; // e.g., "Vacant" or employee name
+  id?: number;
+  title: string;
+  employeeId?: number;
+  employee?: {
+    id: number;
+    firstName: string;
+    lastName?: string | null;
+  };
 }
 
-// Optional: initial roles
-export const initialRoles: Role[] = [
-  { role: 'Manager', person: 'Vacant' },
-  { role: 'Developer', person: 'Vacant' },
-  { role: 'Tester', person: 'Vacant' },
-];
+// Keep for any legacy references
+export const initialRoles: Role[] = [];

@@ -1,20 +1,34 @@
-import { Role } from '../types';
-import { roles } from '../data/role.';
+import prisma from '../lib/prisma';
 
 export class RoleRepository {
-  private roles: Role[] = roles;
 
-  async getAll(): Promise<Role[]> {
-    return this.roles;
+  async getAll() {
+    return prisma.role.findMany({
+      include: { employee: true }
+    });
   }
 
-  async getByPerson(person: string): Promise<Role | undefined> {
-    return this.roles.find(role => role.person === person);
+  async getByPerson(person: string) {
+    const [firstName, ...rest] = person.split(' ');
+    const lastName = rest.join(' ');
+    return prisma.role.findFirst({
+      where: {
+        employee: { firstName, lastName }
+      },
+      include: { employee: true }
+    });
   }
 
-  async addRole(person: string, role: string): Promise<Role> {
-    const newRole: Role = { person, role };
-    this.roles.push(newRole);
-    return newRole;
+  async addRole(person: string, title: string) {
+    const [firstName, ...rest] = person.split(' ');
+    const lastName = rest.join(' ');
+    const employee = await prisma.employee.findFirst({
+      where: { firstName, lastName }
+    });
+    if (!employee) return null;
+    return prisma.role.create({
+      data: { title, employeeId: employee.id },
+      include: { employee: true }
+    });
   }
 }

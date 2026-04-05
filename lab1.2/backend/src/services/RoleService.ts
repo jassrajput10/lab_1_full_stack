@@ -11,7 +11,7 @@ export class RoleService {
   async getAll(): Promise<ApiResponse<Role[]>> {
     try {
       const roles = await this.repository.getAll();
-      return { success: true, data: roles };
+      return { success: true, data: roles as Role[] };
     } catch (error) {
       return { success: false, error: 'Failed to fetch roles' };
     }
@@ -23,7 +23,7 @@ export class RoleService {
       if (!role) {
         return { success: false, error: 'Role not found for person' };
       }
-      return { success: true, data: role };
+      return { success: true, data: role as Role };
     } catch (error) {
       return { success: false, error: 'Failed to fetch role' };
     }
@@ -32,7 +32,10 @@ export class RoleService {
   async create(person: string, role: string): Promise<ApiResponse<Role>> {
     try {
       const newRole = await this.repository.addRole(person, role);
-      return { success: true, data: newRole };
+      if (!newRole) {
+        return { success: false, error: 'Employee not found' };
+      }
+      return { success: true, data: newRole as Role };
     } catch (error) {
       return { success: false, error: 'Failed to create role' };
     }
