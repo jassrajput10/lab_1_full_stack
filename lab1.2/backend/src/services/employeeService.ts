@@ -11,7 +11,7 @@ export class EmployeeService {
   async getAll(): Promise<ApiResponse<Employee[]>> {
     try {
       const employees = await this.repository.getAll();
-      return { success: true, data: employees };
+      return { success: true, data: employees as Employee[] };
     } catch (error) {
       return { success: false, error: 'Failed to fetch employees' };
     }
@@ -19,11 +19,11 @@ export class EmployeeService {
 
   async getById(id: string): Promise<ApiResponse<Employee>> {
     try {
-      const employee = await this.repository.getById(id);
+      const employee = await this.repository.getById(parseInt(id));
       if (!employee) {
         return { success: false, error: 'Employee not found' };
       }
-      return { success: true, data: employee };
+      return { success: true, data: employee as Employee };
     } catch (error) {
       return { success: false, error: 'Failed to fetch employee' };
     }
@@ -32,19 +32,19 @@ export class EmployeeService {
   async getByDepartment(department: string): Promise<ApiResponse<Employee[]>> {
     try {
       const employees = await this.repository.getByDepartment(department);
-      return { success: true, data: employees };
+      return { success: true, data: employees as Employee[] };
     } catch (error) {
       return { success: false, error: 'Failed to fetch employees by department' };
     }
   }
 
-  async create(departmentName: string, employee: { firstName: string; lastName?: string }): Promise<ApiResponse<Department[]>> {
+  async create(departmentName: string, employee: { firstName: string; lastName?: string }): Promise<ApiResponse<Employee>> {
     try {
-      const departments = await this.repository.addEmployee(departmentName, employee);
-      if (!departments) {
+      const newEmployee = await this.repository.addEmployee(departmentName, employee);
+      if (!newEmployee) {
         return { success: false, error: `Department "${departmentName}" not found` };
       }
-      return { success: true, data: departments };
+      return { success: true, data: newEmployee as Employee };
     } catch (error) {
       return { success: false, error: 'Failed to create employee' };
     }

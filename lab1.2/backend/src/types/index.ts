@@ -1,22 +1,22 @@
 export interface Employee {
-  id: string;
+  id: number;
   firstName: string;
-  lastName?: string;
-  fullName: string;
-  department?: string;
+  lastName?: string | null;
+  departmentId: number;
+  department?: Department;
 }
 
 export interface Department {
+  id: number;
   name: string;
-  employees: {
-    firstName: string;
-    lastName?: string;
-  }[];
+  employees?: Employee[];
 }
 
 export interface Role {
-  person: string;
-  role: string;
+  id: number;
+  title: string;
+  employeeId: number;
+  employee?: Employee;
 }
 
 export interface ApiResponse<T> {

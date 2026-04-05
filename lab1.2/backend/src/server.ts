@@ -1,3 +1,6 @@
+import './lib/prisma';
+import 'dotenv/config';
+process.env['DATABASE_URL'] = 'postgresql://postgres:password@localhost:5433/pixelldb?schema=public';
 import express from 'express';
 import cors from 'cors';
 

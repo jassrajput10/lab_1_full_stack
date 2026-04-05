@@ -11,7 +11,7 @@ export class DepartmentService {
   async getAll(): Promise<ApiResponse<Department[]>> {
     try {
       const departments = await this.repository.getAll();
-      return { success: true, data: departments };
+      return { success: true, data: departments as Department[] };
     } catch (error) {
       return { success: false, error: 'Failed to fetch departments' };
     }
@@ -23,7 +23,7 @@ export class DepartmentService {
       if (!department) {
         return { success: false, error: 'Department not found' };
       }
-      return { success: true, data: department };
+      return { success: true, data: department as Department };
     } catch (error) {
       return { success: false, error: 'Failed to fetch department' };
     }
