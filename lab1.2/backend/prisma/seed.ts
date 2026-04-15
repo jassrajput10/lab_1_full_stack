@@ -1,5 +1,4 @@
-process.env.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/pixelldb?schema=public';
-
+process.env.DATABASE_URL = 'postgresql://neondb_owner:npg_FSYyZe5xafz0@ep-odd-hill-amrbrpie-pooler.c-5.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require';
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 

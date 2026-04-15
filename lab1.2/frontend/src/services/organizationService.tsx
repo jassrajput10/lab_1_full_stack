@@ -5,14 +5,16 @@ export const organizationService = {
   async getRoles() {
     const res = await fetch(`${API}/roles`);
     const json = await res.json();
-    // Backend returns { success: true, data: [...] } — unwrap it
     return json.data ?? [];
   },
 
-  async createRole(person: string, role: string) {
+  async createRole(person: string, role: string, token: string) {
     const res = await fetch(`${API}/roles`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ person, role }),
     });
     const json = await res.json();

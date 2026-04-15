@@ -1,3 +1,4 @@
+import { clerkMiddleware } from '@clerk/express';
 import './lib/prisma';
 import 'dotenv/config';
 process.env['DATABASE_URL'] = 'postgresql://postgres:password@localhost:5433/pixelldb?schema=public';
@@ -23,6 +24,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use(clerkMiddleware());
 
 // Health check — GET http://localhost:3001/health
 app.get('/health', (_req, res) => {
@@ -52,7 +55,11 @@ app.use((_req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
 });
 
-app.listen(3001, () => {
-  console.log('Backend running on http://localhost:3001');
-  console.log('Health check: http://localhost:3001/health');
-});
+if (process.env['VERCEL'] !== '1') {
+  app.listen(3001, () => {
+    console.log('Backend running on http://localhost:3001');
+    console.log('Health check: http://localhost:3001/health');
+  });
+}
+
+export default app;

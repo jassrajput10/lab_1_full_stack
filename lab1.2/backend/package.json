@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "clean": "rm -rf dist",
+    "postinstall": "prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma": {
       "seed": "tsx prisma/seed.ts"
@@ -21,6 +22,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clerk/clerk-react": "^5.61.4",
+    "@clerk/express": "^2.1.1",
     "@prisma/client": "^5.22.0",
     "cors": "^2.8.6",
     "express": "^4.19.2",
