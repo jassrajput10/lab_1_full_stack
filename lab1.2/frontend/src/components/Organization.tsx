@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useOrgFormInput } from '../hooks/useOrgFormInput';
 import { organizationService } from '../services/organizationService';
+import { useAuth } from '@clerk/clerk-react';
 import type { Role } from '../data';
 import './Organization.css';
 
 function Organization() {
   const [roles, setRoles] = useState<Role[]>([]);
+  const { getToken } = useAuth();
 
   const firstName = useOrgFormInput('');
   const lastName = useOrgFormInput('');
   const roleName = useOrgFormInput('');
 
-  // Load roles from backend on mount — no seeding, data lives in the backend
   useEffect(() => {
     async function loadRoles() {
       const data: Role[] = await organizationService.getRoles();
@@ -37,10 +38,12 @@ function Organization() {
 
     const fullName = `${firstName.value} ${lastName.value}`.trim();
 
-    const newRole = await organizationService.createRole(fullName, roleName.value.trim());
+    // Get Clerk token before making the request
+    const token = await getToken() ?? '';
+
+    const newRole = await organizationService.createRole(fullName, roleName.value.trim(), token);
 
     if (newRole) {
-      // Append the new role returned from the backend
       setRoles(prev => [...prev, newRole]);
       firstName.reset();
       lastName.reset();
@@ -57,7 +60,7 @@ function Organization() {
       {roles.map((role, index) => (
         <div key={index} className="organization-row">
           <span className="person-name">
-  {         role.employee ? `${role.employee.firstName} ${role.employee.lastName ?? ''}`.trim() : 'Unknown'}
+            {role.employee ? `${role.employee.firstName} ${role.employee.lastName ?? ''}`.trim() : 'Unknown'}
           </span>
           <span className="person-role">{role.title}</span>
         </div>
